@@ -36,7 +36,6 @@ const RestaurantSchema = mongoose.Schema({
       },
       isVeg: {
         type: String,
-        enum: ["veg", "non-veg"],
       },
     },
   ],

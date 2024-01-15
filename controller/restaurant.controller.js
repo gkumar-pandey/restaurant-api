@@ -6,7 +6,7 @@ const createRestaurant = async (req, res) => {
     const newRestaurant = new Restaurant(restaurant);
     const savedRestaurant = await newRestaurant.save();
     if (!savedRestaurant) {
-      res.status(500).json({ error: "Restaurant not saved!" });
+      return res.status(500).json({ error: "Restaurant not saved!" });
     }
     res.status(201).json({ data: { restaurants: savedRestaurant } });
   } catch (error) {
@@ -22,7 +22,7 @@ const readRestaurantsHandler = async (req, res) => {
     if (foundRestaurant) {
       res.status(200).json({ data: { restaurant: foundRestaurant } });
     } else {
-      res.status(404).json({ error: "Restaurant not found!" });
+      return res.status(404).json({ error: "Restaurant not found!" });
     }
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -97,16 +97,73 @@ const deleteRestaurantHandler = async (req, res) => {
   }
 };
 
-const searchRestaurantsByLocation = async (req, res) => {
-  console.log("Hello world");
+const searchRestaurantByLocation = async (req, res) => {
   try {
-    // const { location } = req.query;
+    const { location } = req.query;
 
-    // const restaurants = await Restaurant.find({ city: location });
-    // res.json(restaurants);
-    console.log("hello world");
+    if (!location) {
+      return res
+        .status(400)
+        .json({ error: "Location is required for the search" });
+    }
+
+    const foundRestaurants = await Restaurant.find({ city: location });
+
+    if (foundRestaurants.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No restaurants found matching the location" });
+    }
+
+    res.status(200).json({
+      data: {
+        restaurants: foundRestaurants,
+      },
+    });
   } catch (error) {
-    res.json(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Filter Restaurants by Rating
+const filterRestaurantByRating = async (req, res) => {
+  try {
+    const minRating = req.params.minRating;
+    if (!minRating) {
+      return res
+        .status(400)
+        .json({ error: "Rating is required for filter restaurant by rating" });
+    }
+    const foundRestaurants = await Restaurant.find({
+      rating: { $gte: minRating },
+    });
+    if (foundRestaurants.length == 0) {
+      return res.status(404).json({ message: "Restaurants not found" });
+    }
+    res.status(200).json({ data: { restaurants: foundRestaurants } });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+    throw error;
+  }
+};
+
+// Add Dish to Menu Handler
+const addDishToMenuHandler = async (req, res) => {
+  try {
+    const menu = req.body;
+    const restaurantId = req.params.restaurantId;
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    restaurant.menu.push(menu);
+    await restaurant.save();
+
+    res.status(201).json({ message: "menu is added", restaurant: restaurant });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
     throw error;
   }
 };
@@ -118,5 +175,7 @@ module.exports = {
   readRestaurantByCousineHandler,
   updateRestaurantHandler,
   deleteRestaurantHandler,
-  searchRestaurantsByLocation,
+  searchRestaurantByLocation,
+  filterRestaurantByRating,
+  addDishToMenuHandler,
 };

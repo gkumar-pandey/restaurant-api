@@ -45,6 +45,10 @@ app.get("/", (req, res) => {
 });
 app.use("/restaurants", restaurantRoute);
 
+app.use((req, res) => {
+  res.json({ error: "Route not found" });
+});
+
 app.listen(5000, () => {
   console.log("Server is running at port:5000");
 });
