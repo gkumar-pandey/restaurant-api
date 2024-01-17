@@ -8,6 +8,9 @@ const {
   searchRestaurantByLocation,
   filterRestaurantByRating,
   addDishToMenuHandler,
+  deleteDishFromMenuHandler,
+  addRestaurantRatingAndReviews,
+  getUsersReviewsOfRestaurant,
 } = require("../controller/restaurant.controller");
 const restaurantRoute = express.Router();
 
@@ -19,5 +22,11 @@ restaurantRoute.post("/", createRestaurant);
 restaurantRoute.delete("/:restaurantId", deleteRestaurantHandler);
 restaurantRoute.get("/rating/:minRating", filterRestaurantByRating);
 restaurantRoute.post("/:restaurantId/menu", addDishToMenuHandler);
+restaurantRoute.delete(
+  "/:restaurantId/menu/:dishId",
+  deleteDishFromMenuHandler
+);
+restaurantRoute.post("/:restaurantId/reviews", addRestaurantRatingAndReviews);
+restaurantRoute.get("/:restaurantId/reviews", getUsersReviewsOfRestaurant);
 
 module.exports = restaurantRoute;
