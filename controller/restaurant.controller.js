@@ -1,5 +1,11 @@
 const Restaurant = require("../model/restaurant");
 
+/**
+ * @param {Object} req - Details of restaurant
+ * @param {Object[]} res - Saved restaurant
+ * @route POST /restaurants
+ */
+
 const createRestaurant = async (req, res) => {
   try {
     const restaurant = req.body;
@@ -14,6 +20,12 @@ const createRestaurant = async (req, res) => {
     throw error;
   }
 };
+
+/**
+ * @param {Object} req - req object containing restaurant name in params
+ * @param {Object[]} res - Restaurant data or error
+ * @route GET /restaurants/:name
+ */
 
 const readRestaurantsHandler = async (req, res) => {
   try {
@@ -30,6 +42,12 @@ const readRestaurantsHandler = async (req, res) => {
   }
 };
 
+/**
+ * @param {} req
+ * @param {Object[]} res - send all restaurants data
+ * @route GET /restaurants
+ */
+
 const readAllRestaurantsHandler = async (req, res) => {
   try {
     const foundAllRestaurant = await Restaurant.find();
@@ -43,6 +61,12 @@ const readAllRestaurantsHandler = async (req, res) => {
     throw error;
   }
 };
+
+/**
+ * @route GET /restaurants/cuisine/:cuisineType
+ * @param {Object} req - The request object containing cuisine name in params
+ * @param {Object} res - The respose object containing array of restaurants for a cuisine
+ */
 
 const readRestaurantByCousineHandler = async (req, res) => {
   try {
@@ -59,6 +83,11 @@ const readRestaurantByCousineHandler = async (req, res) => {
   }
 };
 
+/**
+ * @route POST /reststaurants/:restaurantId
+ * @param {Object} req - Object containing update data in body and restaurnat in params
+ * @param {Object} res - Object containing with updated restaurants
+ */
 const updateRestaurantHandler = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
@@ -79,7 +108,11 @@ const updateRestaurantHandler = async (req, res) => {
   }
 };
 
-// delete restaurant
+/**
+ * @route DELETE /restaurants/:restaurantId
+ * @param {Object} req - Object containing restaurnat id in params
+ * @param {Object} res - Object containing deleted restaurnat
+ */
 const deleteRestaurantHandler = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
@@ -87,7 +120,6 @@ const deleteRestaurantHandler = async (req, res) => {
     if (!deletedRestaurant) {
       res.status(404).json({ error: "Restaurant not found" });
     }
-
     res
       .status(204)
       .json({ message: "Deleted seccessfull", restaurant: deletedRestaurant });
@@ -96,6 +128,13 @@ const deleteRestaurantHandler = async (req, res) => {
     throw error;
   }
 };
+
+/**
+ * @route GET /restaurants/search
+ * @param {Object} req - Object containing location in qyery
+ * @param {*} res - Object containing array of restaurants data for location
+ *
+ */
 
 const searchRestaurantByLocation = async (req, res) => {
   try {
@@ -126,7 +165,11 @@ const searchRestaurantByLocation = async (req, res) => {
   }
 };
 
-// Filter Restaurants by Rating
+/**
+ * @route GET /restaurants/rating/:minRating
+ * @param {Object} req - Request object containing minimum rating
+ * @param {Object} res - Response Object containing Array of of Restaurants whose rating >= min rating
+ */
 const filterRestaurantByRating = async (req, res) => {
   try {
     const minRating = req.params.minRating;
@@ -148,7 +191,12 @@ const filterRestaurantByRating = async (req, res) => {
   }
 };
 
-// Add Dish to Menu Handler
+/**
+ * @route POST /restaurants/:restaurantId/menu
+ * @param {Object} req - Object containing restaurant id in prams & menu data in body
+ * @param {Object} res - Object containing restaurant data with new dish added to the menu
+ * @returns
+ */
 const addDishToMenuHandler = async (req, res) => {
   try {
     const menu = req.body;
@@ -167,6 +215,13 @@ const addDishToMenuHandler = async (req, res) => {
     throw error;
   }
 };
+
+/**
+ * @route DELETE /restaurants/:restaurantId/menu/:dishId
+ * @param {Object} req - Object containing restaurant id & dish id
+ * @param {Object} res - Object of restaurant data after deleted dish from menu
+ *
+ */
 
 const deleteDishFromMenuHandler = async (req, res) => {
   try {
@@ -191,6 +246,13 @@ const deleteDishFromMenuHandler = async (req, res) => {
     throw error;
   }
 };
+
+/**
+ * @route POST /restaurants/:restaurantId/reviews
+ * @param {Object} req - Object containing restaurant id in params
+ * @param {Object} res - Object containing restaurant data with new review added
+ *
+ */
 
 const addRestaurantRatingAndReviews = async (req, res) => {
   try {
@@ -225,6 +287,11 @@ const addRestaurantRatingAndReviews = async (req, res) => {
   }
 };
 
+/**
+ * @rotue GET /restaurants/:restaurantId/reviews
+ * @param {Object} req - Object containing restaurant id
+ * @param {Object} res - Object containing array of reviews
+ */
 const getUsersReviewsOfRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
