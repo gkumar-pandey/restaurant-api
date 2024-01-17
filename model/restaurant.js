@@ -43,6 +43,20 @@ const RestaurantSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  reviews: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      rating: {
+        type: Number,
+      },
+      text: {
+        type: String,
+      },
+    },
+  ],
 });
 
 const Restaurant = mongoose.model("Restaurant", RestaurantSchema);

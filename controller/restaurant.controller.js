@@ -168,6 +168,85 @@ const addDishToMenuHandler = async (req, res) => {
   }
 };
 
+const deleteDishFromMenuHandler = async (req, res) => {
+  try {
+    const { restaurantId, dishId } = req.params;
+    const restaurant = await Restaurant.findById(restaurantId);
+
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    const dishIndex = restaurant.menu.findIndex((dish) => dish._id == dishId);
+
+    if (dishIndex == -1) {
+      return res.status(404).json({ error: "Dish not found in menu" });
+    }
+    restaurant.menu.splice(dishIndex, 1);
+    await restaurant.save();
+
+    res.status(200).json({ message: "Dish deleted successfully", restaurant });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+    throw error;
+  }
+};
+
+const addRestaurantRatingAndReviews = async (req, res) => {
+  try {
+    const { userId, rating, reviewText } = req.body;
+    const restaurantId = req.params.restaurantId;
+    const reviewData = {
+      userId,
+      rating,
+      text: reviewText,
+    };
+
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+    restaurant.reviews.push(reviewData);
+
+    const averageRating = restaurant.reviews.reduce(
+      (acc, curr) => (acc = acc + curr.rating),
+      0
+    );
+
+    restaurant.averageRating = averageRating / restaurant.reviews.length;
+    await restaurant.save();
+
+    res.status(200).json({
+      message: "Review added succesfully",
+      restaurant: restaurant,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUsersReviewsOfRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    const restaurant = await Restaurant.findById(restaurantId).populate({
+      path: "reviews",
+      populate: {
+        path: "userId",
+        select: "username",
+      },
+    });
+    if (!restaurant) {
+      res.status(404).json({ error: "Restaurant not found" });
+    }
+    const reviews = restaurant.reviews;
+
+    res.status(200).json({ reviews: reviews });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+    throw error;
+  }
+};
+
 module.exports = {
   createRestaurant,
   readRestaurantsHandler,
@@ -178,4 +257,7 @@ module.exports = {
   searchRestaurantByLocation,
   filterRestaurantByRating,
   addDishToMenuHandler,
+  deleteDishFromMenuHandler,
+  addRestaurantRatingAndReviews,
+  getUsersReviewsOfRestaurant,
 };
