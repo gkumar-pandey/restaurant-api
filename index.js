@@ -9,6 +9,8 @@ const { userRoutes } = require("./routes/user");
 const pageNotFoundErrorHandler = require("./middleware/PageNotFound.middleware");
 const ErrorHandler = require("./middleware/ErrorHandler.middleware");
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -32,6 +34,6 @@ app.use(pageNotFoundErrorHandler);
 // global error handler
 app.use(ErrorHandler);
 
-app.listen(5000, () => {
-  console.log("Server is running at port:5000");
+app.listen(PORT, () => {
+  console.log(`Server is running at PORT:${PORT}`);
 });
