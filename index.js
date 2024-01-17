@@ -1,53 +1,36 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const { connectDb } = require("./db/db");
+const cors = require("cors");
+const helmet = require("helmet");
 
 const restaurantRoute = require("./routes/restaurant");
-
-dotenv.config();
+const { connectDb } = require("./db/db");
+const { userRoutes } = require("./routes/user");
+const pageNotFoundErrorHandler = require("./middleware/PageNotFound.middleware");
+const ErrorHandler = require("./middleware/ErrorHandler.middleware");
 
 const app = express();
 app.use(express.json());
-connectDb();
+app.use(cors());
+app.use(helmet());
 
-const restaurantData = {
-  name: "Delicious Bites",
-  cuisine: "Italian",
-  address: "123 Main Street",
-  city: "Foodville",
-  rating: 4.5,
-  menu: [
-    {
-      name: "Margherita Pizza",
-      price: 12.99,
-      description: "Classic pizza with tomato, mozzarella, and basil",
-      isVeg: false,
-      averageRating: 4.8,
-    },
-    {
-      name: "Spaghetti Bolognese",
-      price: 15.99,
-      description: "Spaghetti with meat sauce and Parmesan cheese",
-      isVeg: true,
-      averageRating: 4.5,
-    },
-    {
-      name: "Tiramisu",
-      price: 7.99,
-      description: "Classic Italian dessert with coffee and mascarpone",
-      isVeg: false,
-      averageRating: 4.2,
-    },
-  ],
-};
+dotenv.config();
+connectDb(); // database connection
+
 app.get("/", (req, res) => {
   res.json("Hello express");
 });
+// Restaurants Routes
 app.use("/restaurants", restaurantRoute);
 
-app.use((req, res) => {
-  res.json({ error: "Route not found" });
-});
+// Users Routes
+app.use("/users", userRoutes);
+
+// 404 Error handler
+app.use(pageNotFoundErrorHandler);
+
+// global error handler
+app.use(ErrorHandler);
 
 app.listen(5000, () => {
   console.log("Server is running at port:5000");
