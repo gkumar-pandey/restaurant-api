@@ -11,6 +11,7 @@ const {
   deleteDishFromMenuHandler,
   addRestaurantRatingAndReviews,
   getUsersReviewsOfRestaurant,
+  updateRestaurantHandler,
 } = require("../controller/restaurant.controller");
 const restaurantRoute = express.Router();
 
@@ -28,6 +29,9 @@ restaurantRoute.get("/cuisine/:cuisineType", readRestaurantByCousineHandler);
 
 // POST /restaurants - Create new restaurant
 restaurantRoute.post("/", createRestaurant);
+
+// POST /restaurants/:restaurantId - Update restaurant data
+restaurantRoute.post("/:restaurantId", updateRestaurantHandler);
 
 // DELETE /restaurants/restaurantId - delete a restaurant
 restaurantRoute.delete("/:restaurantId", deleteRestaurantHandler);
