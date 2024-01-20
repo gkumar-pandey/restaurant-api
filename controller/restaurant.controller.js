@@ -285,6 +285,7 @@ const addRestaurantRatingAndReviews = async (req, res) => {
       restaurant: restaurant,
     });
   } catch (error) {
+    res.status(500).json({ error, message: "Internal server error" });
     throw error;
   }
 };
