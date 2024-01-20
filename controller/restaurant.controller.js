@@ -258,12 +258,12 @@ const deleteDishFromMenuHandler = async (req, res) => {
 
 const addRestaurantRatingAndReviews = async (req, res) => {
   try {
-    const { userId, rating, reviewText } = req.body;
+    const { userId, rating, text } = req.body;
     const restaurantId = req.params.restaurantId;
     const reviewData = {
       userId,
       rating,
-      text: reviewText,
+      text,
     };
 
     const restaurant = await Restaurant.findById(restaurantId);
