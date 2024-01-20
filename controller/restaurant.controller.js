@@ -118,11 +118,13 @@ const deleteRestaurantHandler = async (req, res) => {
     const restaurantId = req.params.restaurantId;
     const deletedRestaurant = await Restaurant.findByIdAndDelete(restaurantId);
     if (!deletedRestaurant) {
-      res.status(404).json({ error: "Restaurant not found" });
+      return res.status(404).json({ error: "Restaurant not found" });
     }
-    res
-      .status(204)
-      .json({ message: "Deleted seccessfull", restaurant: deletedRestaurant });
+
+    res.status(200).json({
+      message: "deleted successfully",
+      restaurant: deletedRestaurant,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
     throw error;
