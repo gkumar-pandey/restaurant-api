@@ -3,11 +3,10 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const helmet = require("helmet");
 
-const restaurantRoute = require("./routes/restaurant");
 const { connectDb } = require("./db/db");
-const { userRoutes } = require("./routes/user");
 const pageNotFoundErrorHandler = require("./middleware/PageNotFound.middleware");
 const ErrorHandler = require("./middleware/ErrorHandler.middleware");
+const routes = require("./routes");
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,14 +18,7 @@ app.use(helmet());
 dotenv.config();
 connectDb(); // database connection
 
-app.get("/", (req, res) => {
-  res.json("Hello express");
-});
-// Restaurants Routes
-app.use("/restaurants", restaurantRoute);
-
-// Users Routes
-app.use("/users", userRoutes);
+app.use("/", routes);
 
 // 404 Error handler
 app.use(pageNotFoundErrorHandler);
